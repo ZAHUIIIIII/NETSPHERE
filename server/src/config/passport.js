@@ -35,7 +35,7 @@ function ensureGoogleStrategy() {
                         // Sanitize username: remove invalid characters (keep only letters, numbers, spaces)
                         // Remove periods, parentheses, and other special characters
                         const sanitized = displayName.replace(/[^\p{L}\p{N} ]/gu, '').trim();
-                        const normalized = sanitized || `user_${profile.id}`;
+                        const normalized = sanitized || `user ${profile.id}`;
                         
                         // Create canonical usernameKey (lowercase, remove periods)
                         const usernameKey = normalized.toLowerCase().replace(/\./g, '');
@@ -48,10 +48,10 @@ function ensureGoogleStrategy() {
                             const existingByKey = await User.findOne({ usernameKey });
                             if (existingByKey) {
                                 // fallback to a safe unique username
-                                const fallback = `user_${profile.id}`;
+                                const fallback = `user ${profile.id}`;
                                 user = await User.create({
                                     username: fallback,
-                                    usernameKey: fallback.toLowerCase().replace(/\./g, ''),
+                                    usernameKey: fallback.toLowerCase().replace(/\./g, '').replace(/\s+/g, ''),
                                     email,
                                     avatar: googleAvatar || '',
                                     birthday: new Date('2000-01-01'),
